@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "title": "Web Development",
+      "description": "Work as a Frontend Developer.",
+      "date": "2026-04-14",
+      "status": "In Progress",
+      "id": "1776090879747"
+    },
+    {
+      "id": "1771090879757",
+      "title": "Website Design",
+      "description": "It's a full stack project update UI",
+      "date": "04/12/26",
+      "status": "Completed"
+    },
+    {
+      "id": "1776090971747",
+      "title": "Marketing Campaign",
+      "description": "Make new strategy for marketing",
+      "date": "04/12/26",
+      "status": "In Progress"
+    },
+    {
+      "id": "1771290879747",
+      "title": "Greening India Campaign",
+      "description": "Modify campaign details and promote",
+      "date": "04/12/26",
+      "status": "On Hold"
+    }
+  ],
+  "tasks": [
+    {
+      "projectId": "1776090879747",
+      "title": "Navbar Updation",
+      "description": "Modify navbar with dark mode and resposive properly.",
+      "date": "2026-04-30",
+      "status": "In Queue",
+      "priority": "High",
+      "assignee": "Sayan Haldar",
+      "id": "1776094681415"
+    }
+  ]
+}
