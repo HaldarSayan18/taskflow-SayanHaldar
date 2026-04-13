@@ -1,4 +1,13 @@
 {
+  "users":[
+    {
+      "firstName":"Sayan",
+      "lastName":"Haldar",
+      "email":"sayan@gmail.com",
+      "password":"1234",
+      "id":1777090820739
+    }
+  ],
   "projects": [
     {
       "title": "Web Development",
@@ -11,21 +20,21 @@
       "id": "1771090879757",
       "title": "Website Design",
       "description": "It's a full stack project update UI",
-      "date": "04/12/26",
+      "date": "2026-04-17",
       "status": "Completed"
     },
     {
       "id": "1776090971747",
       "title": "Marketing Campaign",
       "description": "Make new strategy for marketing",
-      "date": "04/12/26",
+      "date": "2026-04-17",
       "status": "In Progress"
     },
     {
       "id": "1771290879747",
       "title": "Greening India Campaign",
       "description": "Modify campaign details and promote",
-      "date": "04/12/26",
+      "date": "2026-04-17",
       "status": "On Hold"
     }
   ],
