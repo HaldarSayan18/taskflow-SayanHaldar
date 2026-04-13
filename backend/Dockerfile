@@ -1,20 +1,24 @@
-# 1. Use a lightweight Node.js image
-FROM node:20-alpine
+# ---------- Build Stage ----------
+FROM node:20 AS builder
 
-# 2. Set the working directory inside the container
 WORKDIR /app
 
-# 3. Copy package files first (this speeds up builds by caching layers)
 COPY package*.json ./
-
-# 4. Install dependencies
 RUN npm install
 
-# 5. Copy the rest of your backend source code
 COPY . .
+RUN npm run build
 
-# 6. Tell Docker the container will listen on port 4000
-EXPOSE 4000
+# ---------- Production Stage ----------
+FROM node:20-alpine
 
-# 7. Start the server
-CMD ["npm", "start"]
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 5000
+
+CMD ["node", "dist/index.ts"]
