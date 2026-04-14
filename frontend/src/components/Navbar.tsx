@@ -2,13 +2,13 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { decodeToken } from "../utils/jwt";
-import { useToast } from "@chakra-ui/react";
+import { Button, Text, useToast } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 
 const Navbar = ({ isLightmode, setIsLightMode }: { isLightmode: boolean; setIsLightMode: (isLightMode: boolean) => void }) => {
     const token = localStorage.getItem("token");
     let user = null;
-    if (token) {user = decodeToken(token)}
+    if (token) { user = decodeToken(token) }
 
     const navigate = useNavigate();
     const toast = useToast();
@@ -61,11 +61,11 @@ const Navbar = ({ isLightmode, setIsLightMode }: { isLightmode: boolean; setIsLi
                             : <MdDarkMode size={30} className={`bg-slate-500/80 p-1 text-gray-800 rounded-md`} />
                         }
                     </button>
-                    {/* <Button
-                    type="button" onClick={()=>navigate("/login")}
-                    bgGradient={`${isLightmode ? 'linear(to-l, gray.200, blue.100)' : 'linear(to-r, gray.500, blue.700)'}`}
-                    className={`shadow-lg`}
-                    ><Text>Signin/Signup</Text></Button> */}
+                    <Button
+                        type="button" onClick={() => navigate("/login")}
+                        bgGradient={`${isLightmode ? 'linear(to-l, gray.200, blue.100)' : 'linear(to-r, gray.500, blue.700)'}`}
+                        className={`shadow-lg`}
+                    ><Text>Signin/Signup</Text></Button>
                 </div>
             )}
         </div>

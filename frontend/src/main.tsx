@@ -8,7 +8,7 @@ import { BrowserRouter } from 'react-router-dom'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ChakraProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/taskflow-SayanHaldar">
         <App />
       </BrowserRouter>
     </ChakraProvider>
