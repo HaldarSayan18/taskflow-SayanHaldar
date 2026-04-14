@@ -5,21 +5,21 @@ TaskFlow — Engineering Take-Home Assignment. A Greening India Assignment.
 This project is a full-featured task management system built as part of a full-stack engineering assignment.
 It allows users to:
 
-Authenticate using JWT-based login
-Create and manage projects
-Create, update, and delete tasks under projects
-Assign tasks and track their status
-Use a modal-based UX for editing without losing navigation context
+* Authenticate using JWT-based login
+* Create and manage projects
+* Create, update, and delete tasks under projects
+* Assign tasks and track their status
+* Use a modal-based UX for editing without losing navigation context
 
 The focus of this project is not just functionality, but real-world architecture decisions, clean UX, and production-style routing patterns.
 
 ## Tech Stack
 
 In this project my role was a Frontend Developer. So in that case I have used,
-React(TypeScript)
-Chakra UI
-Formik + Yup validation
-Json-server mock API
+* React(TypeScript)
+* Chakra UI
+* Formik + Yup validation
+* Json-server mock API
 
 ## Architechture Decisions
 
@@ -55,42 +55,42 @@ Entire system runs via: "docker compose up --build"
 
 ## Running Locally
 
-git clone https://github.com/<your-username>/<repo-name>
-cd <repo-name>
-cp .env.example .env
-docker compose up --build
+* git clone https://github.com/<your-username>/<repo-name>
+* cd <repo-name>
+* cp .env.example .env
+* docker compose up --build
 
-# Access
+## Access
 
-Frontend: http://localhost:4000
-Backend: http://localhost:5000
-Database: PostgreSQL (port 5432)
+* Frontend: http://localhost:4000
+* Backend: http://localhost:5000
+* Database: PostgreSQL (port 5432)
 
 ## API Reference
 
 Auth
 
-POST /auth/register
-POST /auth/login
+* POST /auth/register
+* POST /auth/login
 
 Projects
 
-GET /projects
-POST /projects
-GET /projects/:id
-PATCH /projects/:id
-DELETE /projects/:id
+* GET /projects
+* POST /projects
+* GET /projects/:id
+* PATCH /projects/:id
+* DELETE /projects/:id
 
 Tasks
 
-GET /projects/:id/tasks
-POST /projects/:id/tasks
-PATCH /tasks/:id
-DELETE /tasks/:id
+* GET /projects/:id/tasks
+* POST /projects/:id/tasks
+* PATCH /tasks/:id
+* DELETE /tasks/:id
 
 ## If Given More Time I wWill DO
 
-Real-time updates using WebSockets
-Advanced filtering & pagination
-Role-based access control (RBAC)
-Proper Backend Integration
+* Real-time updates using WebSockets
+* Advanced filtering & pagination
+* Role-based access control (RBAC)
+* Proper Backend Integration
