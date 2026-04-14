@@ -8,9 +8,5 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
-  server: {
-    port: 4000,
-    strictPort: true,
-    host: true,
-  },
+  base:'/taskflow-SayanHaldar/',
 })
