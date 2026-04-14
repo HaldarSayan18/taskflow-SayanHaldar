@@ -18,35 +18,33 @@ import {
 } from '@chakra-ui/react'
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { FaChevronDown } from 'react-icons/fa6';
+// import { FaChevronDown } from 'react-icons/fa6';
 import { RxUpdate } from "react-icons/rx";
-import { TaskSchema } from '../utils/validation';
+import { projectSchema } from '../utils/validation';
 import { BASE_URL } from '../assets/api/api';
-import { UpdateTaskForm } from '../assets/types/type';
+import { UpdateProjectForm } from '../assets/types/type';
+import { useNavigate } from 'react-router-dom';
 
-export function UpdateTaskModal({ isOpen, onClose, task, fetchTasks }: {
-    isOpen: boolean; onClose: () => void, task: any, fetchTasks: () => void;
+export function UpdateProjectModal({ isOpen, onClose, project, }: {
+    isOpen: boolean; onClose: () => void, project: any;
 }) {
+    // console.log("Modal rendeder.")
     const toast = useToast();
-    const statuses = ["Completed", "In Progress", "In Queue", "On Hold"];
-    const priorities = ["High", "Medium", "Low"];
+    const navigate = useNavigate();
+    // const statuses = ["Completed", "In Progress", "In Queue", "On Hold"];
     const [loading, setLoading] = useState(false);
 
-    const formik = useFormik<UpdateTaskForm>({
+    const formik = useFormik<UpdateProjectForm>({
         // enableReinitialize: true,
         initialValues: {
-            title: task?.title || "",
-            description: task?.description || "",
-            assignee: task?.assignee || "",
-            date: task?.date || "",
-            status: task?.status || "",
-            priority: task?.priority || "",
+            title: project?.title || "",
+            description: project?.description || "",
         },
-        validationSchema: TaskSchema,
+        validationSchema: projectSchema,
         onSubmit: async (values, { resetForm }) => {
             try {
                 setLoading(true);
-                const response = await fetch(`${BASE_URL}/tasks/${task.id}`, {
+                const response = await fetch(`${BASE_URL}/projects/${project.id}`, {
                     method: 'PATCH',
                     headers: { "Content-type": "application/json" },
                     body: JSON.stringify(values)
@@ -55,18 +53,19 @@ export function UpdateTaskModal({ isOpen, onClose, task, fetchTasks }: {
                 // const updatedTask = await response.json();
                 // console.log('updated', updatedTask);
                 toast({
-                    title: 'Task Updated',
-                    description: "Task has been updated successfully.",
+                    title: 'Project Updated',
+                    description: "Project has been updated successfully.",
                     status: 'success',
                     duration: 1000,
                     isClosable: true,
                     position: 'top'
                 });
-                fetchTasks();
+                // fetchProjects();
                 resetForm();
                 onClose();
+                navigate('/projects');
             } catch (error: any) {
-                setLoading(true);
+                // setLoading(true);
                 toast({
                     title: 'Error in updating',
                     description: error.message || "Something went wrong",
@@ -111,7 +110,7 @@ export function UpdateTaskModal({ isOpen, onClose, task, fetchTasks }: {
                         </FormControl>
 
                         {/* status */}
-                        <FormControl isInvalid={!!formik.errors.status && formik.touched.status}>
+                        {/* <FormControl isInvalid={!!formik.errors.status && formik.touched.status}>
                             <Menu>
                                 <MenuButton variant="outline" as={Button} rightIcon={<FaChevronDown />} textAlign="start" className={`w-full items-start justify-between`}>
                                     {formik.values.status || 'Status'}
@@ -125,44 +124,7 @@ export function UpdateTaskModal({ isOpen, onClose, task, fetchTasks }: {
                                 </MenuList>
                             </Menu>
                             <FormErrorMessage>{formik.errors.status}</FormErrorMessage>
-                        </FormControl>
-
-                        {/* priority */}
-                        <FormControl isInvalid={!!formik.errors.priority && formik.touched.priority}>
-                            <Menu>
-                                <MenuButton variant="outline" as={Button} rightIcon={<FaChevronDown />} textAlign="start" className={`w-full items-start justify-between`}>
-                                    {formik.values.priority || 'Priority'}
-                                </MenuButton>
-                                <MenuList>
-                                    {priorities.map((p: string) => (
-                                        <MenuItem key={p} onClick={() => formik.setFieldValue('priority', p)}>
-                                            {p}
-                                        </MenuItem>
-                                    ))}
-                                </MenuList>
-                            </Menu>
-                            <FormErrorMessage>{formik.errors.priority}</FormErrorMessage>
-                        </FormControl>
-
-                        {/* assignee */}
-                        <FormControl isInvalid={!!formik.errors.assignee && formik.touched.assignee}>
-                            <Input type='text' placeholder='Assignee'
-                                value={formik.values.assignee} name='assignee'
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                            <FormErrorMessage>{formik.errors.assignee}</FormErrorMessage>
-                        </FormControl>
-
-                        {/* due date */}
-                        <FormControl isInvalid={!!formik.errors.date && formik.touched.date}>
-                            <Input type='date' placeholder='Due Date'
-                                value={formik.values.date} name='date'
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                            <FormErrorMessage>{formik.errors.date}</FormErrorMessage>
-                        </FormControl>
+                        </FormControl> */}
                     </form>
                 </ModalBody>
 

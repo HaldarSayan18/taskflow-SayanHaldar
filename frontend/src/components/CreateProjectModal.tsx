@@ -15,32 +15,41 @@ import {
     useToast,
     FormControl,
     FormErrorMessage,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
+import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { useFormik } from 'formik';
-import { FaChevronDown } from 'react-icons/fa6';
+// import { FaChevronDown } from 'react-icons/fa6';
 import { MdAdd } from 'react-icons/md';
 import { ProjectFormValues } from '../assets/types/type';
-import { validationSchema } from '../utils/validation';
+import { projectSchema } from '../utils/validation';
 import { BASE_URL } from '../assets/api/api';
+import { decodeToken } from '../utils/jwt';
 
-export function ProjectModal({
+export function CreateProjectModal({
     isOpen, onClose, fetchProjects }: {
         isOpen: boolean; onClose: () => void; fetchProjects: () => void
     }) {
-    const statuses = ["Completed", "In Progress", "In Queue", "On Hold"];
+    // const statuses = ["Completed", "In Progress", "In Queue", "On Hold"];
     const [loading, setLoading] = useState<boolean>(false);
     const toast = useToast();
+
+    // owner id
+    let owner = null;
+    const token = localStorage.getItem("token");
+    if (token) { owner = decodeToken(token); }
 
     // handle project form
     const formik = useFormik<ProjectFormValues>({
         initialValues: {
+            owner: "",
+            id: uuidv4(),
             title: "",
             description: "",
-            date: "",
-            status: "",
+            date: new Date().toLocaleString(),
+            // status: "",
         },
-        validationSchema,
+        validationSchema: projectSchema,
         onSubmit: async (values, { resetForm }) => {
             try {
                 setLoading(true);
@@ -49,7 +58,7 @@ export function ProjectModal({
                     headers: { "Content-type": "application/json" },
                     body: JSON.stringify({
                         ...values,
-                        id: Date.now().toString(),
+                        owner: owner.id,
                     })
                 });
                 await response.json();
@@ -66,7 +75,6 @@ export function ProjectModal({
                 resetForm();
                 onClose();
             } catch (error: any) {
-                setLoading(true);
                 toast({
                     title: 'Error in saving',
                     description: error.message || "Something went wrong",
@@ -110,17 +118,17 @@ export function ProjectModal({
                         </FormControl>
 
                         {/* date */}
-                        <FormControl isInvalid={!!formik.errors.date && formik.touched.date}>
+                        {/* <FormControl isInvalid={!!formik.errors.date && formik.touched.date}>
                             <Input type='date' placeholder='Date'
                                 value={formik.values.date} name='date'
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
                             <FormErrorMessage>{formik.errors.date}</FormErrorMessage>
-                        </FormControl>
+                        </FormControl> */}
 
                         {/* status */}
-                        <FormControl isInvalid={!!formik.errors.status && formik.touched.status}>
+                        {/* <FormControl isInvalid={!!formik.errors.status && formik.touched.status}>
                             <Menu>
                                 <MenuButton variant="outline" as={Button} rightIcon={<FaChevronDown />} textAlign="start"
                                     textFillColor='black'
@@ -128,7 +136,6 @@ export function ProjectModal({
                                     className={`w-full items-start justify-between`}
                                 >
                                     {formik.values.status || "Status"}
-                                    {/* {status ? status : "Status"} */}
                                 </MenuButton>
                                 <MenuList>
                                     {statuses.map((s: string) => (
@@ -141,7 +148,7 @@ export function ProjectModal({
                                 </MenuList>
                             </Menu>
                             <FormErrorMessage>{formik.errors.status}</FormErrorMessage>
-                        </FormControl>
+                        </FormControl> */}
                     </form>
                 </ModalBody>
 

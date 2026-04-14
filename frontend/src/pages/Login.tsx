@@ -21,12 +21,12 @@ const Login = ({ isLightmode }: { isLightmode: boolean }) => {
             email: "",
             password: "",
         },
-        validationSchema : loginSchema,
+        validationSchema: loginSchema,
         onSubmit: async (values, { resetForm }) => {
             try {
                 setLoading(true);
                 const response = await fetch(`${BASE_URL}/users?email=${values.email}&password=${values.password}`);
-                if(!response.ok){
+                if (!response.ok) {
                     toast({
                         title: "Invalid",
                         status: "error",
@@ -39,10 +39,10 @@ const Login = ({ isLightmode }: { isLightmode: boolean }) => {
                 // const res = response.json();
                 const users = await response.json();
                 const user = users[0];
-                if(users.length === 0){
+                if (users.length === 0) {
                     toast({
                         title: "User not found",
-                        description:"Check credentials properly",
+                        description: "Check credentials properly",
                         status: "error",
                         position: 'top',
                         duration: 1000,
@@ -52,6 +52,7 @@ const Login = ({ isLightmode }: { isLightmode: boolean }) => {
                 }
                 console.log("user details ==>", user);
                 const token = generateToken({
+                    id: user.id,
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName

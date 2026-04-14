@@ -1,38 +1,79 @@
-import { Box, Button, Card, CardBody, CardHeader, Heading, Input, Text, useDisclosure, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import { Box, Button, Card, CardBody, CardHeader, Heading, Input, Text, useDisclosure, Menu, MenuButton, MenuList, MenuItem, useToast } from "@chakra-ui/react";
 import { MdAdd, MdCalendarToday } from "react-icons/md";
-import { ProjectModal } from "../components/CreateProjectModal";
-import { FaChevronDown } from "react-icons/fa6";
+import { CreateProjectModal } from "../components/CreateProjectModal";
+// import { FaChevronDown } from "react-icons/fa6";
 import { FiSearch } from "react-icons/fi";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { RiDeleteBin6Fill, RiEditFill } from "react-icons/ri";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Project } from "../assets/types/type";
 import { BASE_URL } from "../assets/api/api";
 
 
 const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
+    const location = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [projects, setProjects] = useState<Project[]>([]);
-    const statuses = ["All", "Completed", "In Progress", "In Queue", "On Hold"];
-    const [status, setStatus] = useState("All");
+    const [allProjects, setAllProjects] = useState<Project[]>([]);
+    const toast = useToast();
+    const navigate = useNavigate();
+    // const statuses = ["All", "Completed", "In Progress", "In Queue", "On Hold"];
+    // const [status, setStatus] = useState("All");
 
     // fetch projects from api
     const fetchProjects = async () => {
         const response = await fetch(`${BASE_URL}/projects`);
         const projects: any = await response.json();
         setProjects(projects);
+        setAllProjects(projects);
     };
-    useEffect(() => { fetchProjects() }, []);
+    useEffect(() => { fetchProjects() }, [location.pathname]);
 
     // search filter
     const [searchTerm, setSearchTerm] = useState('');
     useEffect(() => {
-        const filteredProjects = projects.filter((project: any) =>
+        const filteredProjects = allProjects.filter((project: any) =>
             project.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setProjects(filteredProjects);
     }, [searchTerm]);
 
+    // delete project
+    const handleDelete = async (projectId: string) => {
+        try {
+            const res = await fetch(`${BASE_URL}/projects/${projectId}`, {
+                method: 'DELETE'
+            });
+            if (!res.ok) {
+                toast({
+                    title: "Something went wrong",
+                    status: "error",
+                    duration: 1000,
+                    position: "top",
+                });
+                return;
+            }
+            toast({
+                title: "Project deleted",
+                status: "error",
+                duration: 1000,
+                position: "top",
+            });
+            // console.log('deleted-->',projectId);
+            // update state
+            setProjects((prev: any[]) => prev.filter((project) => project.id !== projectId))
+        } catch (error) {
+            toast({
+                title: "Error in deleting",
+                status: "error",
+                duration: 1000,
+                position: "top",
+            });
+        }
+    };
+
+    
     return (
         <div className={`w-full min-h-screen ${isLightmode ? 'bg-gray-100 text-black' : 'bg-gray-900 text-white'} pb-5`}>
             <div className={`flex flex-col items-center justify-center gap-10 ${isLightmode ? 'bg-gray-100 text-black' : 'bg-gray-900 text-white'}`}>
@@ -58,7 +99,7 @@ const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </Box>
-                    <Menu>
+                    {/* <Menu>
                         <MenuButton variant='solid' as={Button} rightIcon={<FaChevronDown />} textAlign="start" className={`shadow-md w-50 items-start justify-between`}
                             bgColor={`${isLightmode ? 'white' : '#2b3343'}`}
                             textFillColor={`${isLightmode ? 'black' : 'white'}`}
@@ -78,7 +119,7 @@ const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
                                 </MenuItem>
                             ))}
                         </MenuList>
-                    </Menu>
+                    </Menu> */}
                 </div>
 
                 {/* project list */}
@@ -87,9 +128,19 @@ const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
                         <Card key={project.id} className={`m-2 px-2 py-4`} bgColor={`${isLightmode ? 'gray.200' : 'gray.50'}`}>
                             <CardHeader borderWidth='0px' padding='10px' className={`flex items-center justify-between`}>
                                 <Heading size='md'>{project.title}</Heading>
-                                <Link to={`/projects/${project.id}`}>
-                                    <FaExternalLinkAlt size={33} className={`${isLightmode ? 'bg-gray-400/50 p-2 rounded-md hover:bg-gray-400/80' : 'bg-gray-200/50 p-2 rounded-md hover:bg-gray-300/80'} hover:cursor-pointer`} />
-                                </Link>
+                                <div className={`flex items-center justify-center gap-2`}>
+                                    <Link to={`/projects/${project.id}`}>
+                                        <FaExternalLinkAlt size={33} className={`${isLightmode ? 'bg-gray-400/50 p-2 rounded-md hover:bg-gray-400/80' : 'bg-gray-200/50 p-2 rounded-md hover:bg-gray-300/80'} hover:cursor-pointer`} />
+                                    </Link>
+                                    <RiEditFill size={33} className={`${isLightmode ? 'bg-gray-400/50 p-2 rounded-md hover:bg-gray-400/80' : 'bg-gray-200/50 p-2 rounded-md hover:bg-gray-300/80'} hover:cursor-pointer`}
+                                        onClick={() => navigate(`/projects/${project.id}/edit`, { state: { background: location } })}
+                                    />
+                                    <RiDeleteBin6Fill size={33} className={`${isLightmode ? 'bg-red-400/50 p-2 rounded-md hover:bg-red-400/80' : 'bg-red-200/50 p-2 rounded-md hover:bg-red-300/80'} hover:cursor-pointer text-red-800`}
+                                        type="button"
+                                        onClick={() => { handleDelete(project.id) }}
+                                    />
+                                </div>
+
                             </CardHeader>
                             <CardBody borderWidth='0px' padding='5px' className={`flex flex-col items-strech justify-between`}>
                                 <Text>{project.description}</Text>
@@ -97,7 +148,9 @@ const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
                                     <Text fontSize='sm' color='gray.500' className={`flex items-center gap-1 mt-2`}>
                                         <MdCalendarToday size={16} />{project.date}
                                     </Text>
-                                    <Text
+
+                                    {/* status */}
+                                    {/* <Text
                                         borderWidth={`${isLightmode ? '1px' : '1px'}`}
                                         borderColor={`${isLightmode ? project.status === 'Completed' ? 'green.300' : project.status === 'In Progress' ? 'yellow.300' : project.status === 'On Hold' ? 'red.300' : 'blue.300' : 'gray.200'}`}
                                         bgColor={
@@ -113,7 +166,7 @@ const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
                                         className={`px-2 py-1 rounded-md text-sm font-semibold`}
                                     >
                                         {project.status}
-                                    </Text>
+                                    </Text> */}
                                 </Box>
                             </CardBody>
                         </Card>
@@ -121,7 +174,9 @@ const Projects = ({ isLightmode }: { isLightmode: boolean }) => {
                 </div>
             </div>
             {/* project modal */}
-            <ProjectModal isOpen={isOpen} onClose={onClose} fetchProjects={fetchProjects} />
+            <CreateProjectModal isOpen={isOpen} onClose={onClose} fetchProjects={fetchProjects} />
+
+            <Outlet context={{ projects, fetchProjects }} />
         </div>
     )
 }

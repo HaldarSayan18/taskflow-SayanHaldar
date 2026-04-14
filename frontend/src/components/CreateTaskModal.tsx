@@ -15,13 +15,14 @@ import {
     FormControl,
     FormErrorMessage,
     useToast,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
+import { v4 as uuidv4 } from 'uuid';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa6';
 import { MdAdd } from 'react-icons/md';
 import { TaskFormValues } from '../assets/types/type';
-import { validationSchema } from '../utils/validation';
+import { TaskSchema } from '../utils/validation';
 import { BASE_URL } from '../assets/api/api';
 
 export function TaskModal(
@@ -42,9 +43,10 @@ export function TaskModal(
             date: "",
             status: "",
             priority: "",
+            assigneeId: "",
             assignee: "",
         },
-        validationSchema,
+        validationSchema: TaskSchema,
         onSubmit: async (values, { resetForm }) => {
             try {
                 setLoading(true);
@@ -53,7 +55,8 @@ export function TaskModal(
                     headers: { "Content-type": "application/json" },
                     body: JSON.stringify({
                         ...values,
-                        id: Date.now().toString(),
+                        id: uuidv4(),
+                        assigneeId: uuidv4(),
                         projectId: projectId,
                     })
                 });

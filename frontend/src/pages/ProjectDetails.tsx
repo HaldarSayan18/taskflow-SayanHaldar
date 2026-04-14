@@ -1,11 +1,11 @@
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import { Box, Button, Card, CardBody, CardHeader, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Card, CardBody, CardHeader, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import Notfound from './Notfound';
 import { FiSearch } from 'react-icons/fi';
 import { FaChevronDown } from 'react-icons/fa6';
 import { useEffect, useState } from 'react';
 import { MdAdd, MdCalendarToday } from 'react-icons/md';
-import { RiEditFill } from 'react-icons/ri';
+import { RiDeleteBin2Fill, RiEditFill } from 'react-icons/ri';
 import { TaskModal } from '../components/CreateTaskModal';
 import { Project, Task } from "../assets/types/type";
 import { BASE_URL } from "../assets/api/api";
@@ -23,6 +23,7 @@ export const ProjectDetails = ({ isLightmode }: { isLightmode: boolean }) => {
 
     // create-task modal
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast();
 
     // fetch projects from api
     const fetchProjects = async () => {
@@ -51,6 +52,40 @@ export const ProjectDetails = ({ isLightmode }: { isLightmode: boolean }) => {
         });
         setTasks(filteredTasks);
     }, [searchTerm, status]);
+
+    // delete task
+    const handleDelete = async (taskId: string) => {
+        try {
+            const res = await fetch(`${BASE_URL}/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+            if (!res.ok) {
+                toast({
+                    title: "Something went wrong",
+                    status: "error",
+                    duration: 1000,
+                    position: "top",
+                });
+                return;
+            }
+            toast({
+                title: "Project deleted",
+                status: "error",
+                duration: 1000,
+                position: "top",
+            });
+            // console.log('deleted-->',projectId);
+            // update state
+            setTasks((prev: any[]) => prev.filter((task) => task.id !== taskId))
+        } catch (error) {
+            toast({
+                title: "Error in deleting",
+                status: "error",
+                duration: 1000,
+                position: "top",
+            });
+        }
+    };
 
     if (!project) {
         return <Notfound isLightmode={isLightmode} />
@@ -113,9 +148,13 @@ export const ProjectDetails = ({ isLightmode }: { isLightmode: boolean }) => {
                                     <Heading size='md'>{task.title}</Heading>
                                     <Text fontSize='sm' color='gray.500' className={`flex items-center gap-1 mt-2`}>Assigned by: {task.assignee}</Text>
                                 </div>
-                                <div className={`flex items-center justify-between gap-2`}>
+                                <div className={`flex items-center justify-center gap-2`}>
                                     <RiEditFill size={33} className={`${isLightmode ? 'bg-gray-400/50 p-2 rounded-md hover:bg-gray-400/80' : 'bg-gray-200/50 p-2 rounded-md hover:bg-gray-300/80'} hover:cursor-pointer`}
                                         onClick={() => navigate(`/projects/${id}/task/${task.id}`)}
+                                    />
+                                    <RiDeleteBin2Fill size={33} className={`${isLightmode ? 'bg-red-400/50 p-2 rounded-md hover:bg-red-400/80' : 'bg-red-200/50 p-2 rounded-md hover:bg-red-300/80'} hover:cursor-pointer text-red-800`}
+                                        type="button"
+                                        onClick={() => { handleDelete(task.id) }}
                                     />
                                     {/* priority */}
                                     <Text
@@ -170,9 +209,9 @@ export const ProjectDetails = ({ isLightmode }: { isLightmode: boolean }) => {
             </div>
 
             {/* modal */}
-            <TaskModal isOpen={isOpen} onClose={onClose} fetchTasks={fetchTasks} projectId={id!}/>
+            <TaskModal isOpen={isOpen} onClose={onClose} fetchTasks={fetchTasks} projectId={id!} />
 
-            <Outlet context={{tasks, fetchTasks}}/>
+            <Outlet context={{ tasks, fetchTasks }} />
         </div>
     );
 };
