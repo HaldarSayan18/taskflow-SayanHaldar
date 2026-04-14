@@ -87,7 +87,7 @@ Tasks
 * PATCH /tasks/:id
 * DELETE /tasks/:id
 
-## If Given More Time I wWill DO
+## If Given More Time I Will DO
 
 * Real-time updates using WebSockets
 * Advanced filtering & pagination
